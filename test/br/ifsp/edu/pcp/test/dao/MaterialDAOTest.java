@@ -25,6 +25,7 @@ public class MaterialDAOTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+                tearDownAfterClass();
 		materialDAO = new MaterialDAO();
 		unidadeMedidaDAO = new UnidadeMedidaDAO();
 		unidadeMedida = new UnidadeMedida("Unidade", "UN");
@@ -95,8 +96,10 @@ public class MaterialDAOTest {
 	public static void tearDownAfterClass() throws Exception {
 		EntityManager entityManager = HibernateUtil.getInstance();
 		entityManager.getTransaction().begin();
-		entityManager.createNativeQuery("TRUNCATE TABLE produto CASCADE").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE unidade CASCADE").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE produto").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE unidade").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 		entityManager.flush();
 		entityManager.getTransaction().commit();
 

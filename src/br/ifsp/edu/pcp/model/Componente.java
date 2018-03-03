@@ -1,5 +1,7 @@
 package br.ifsp.edu.pcp.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -15,8 +17,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name="produto")
 @DiscriminatorColumn(name="prod_tipo")
-public abstract class Componente {
+public abstract class Componente implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue (strategy=GenerationType.IDENTITY)
 	@Column(name="prod_id")
@@ -146,6 +152,7 @@ public abstract class Componente {
 	}
 
 
+	
 	public void setQuantidadeMinima(Double quantidadeMinima) {
 		this.quantidadeMinima = quantidadeMinima;
 	}
@@ -209,6 +216,7 @@ public abstract class Componente {
 	public void setSituacao(SituacaoProduto situacao) {
 		this.situacao = situacao;
 	}
+
 
 
 	

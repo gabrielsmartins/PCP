@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import br.ifsp.edu.pcp.model.ItemEstrutura;
 import br.ifsp.edu.pcp.model.Material;
 import br.ifsp.edu.pcp.model.Produto;
 import br.ifsp.edu.pcp.model.SituacaoProduto;
@@ -40,8 +41,10 @@ public class ProdutoTest {
 		produto.setSituacao(SituacaoProduto.ATIVO);
 		
 		
-		produto.adicionarMaterial(material1,2.00);
-		produto.adicionarMaterial(material2,1.00);
+		ItemEstrutura item1 = new ItemEstrutura(material1, 2.00);
+		ItemEstrutura item2 = new ItemEstrutura(material2, 1.00);
+		produto.adicionarComponente(item1);
+		produto.adicionarComponente(item2);
 		
 		assertEquals("Mesa", produto.getDescricao());
 		assertEquals("MI-005", produto.getCodigoInterno());
@@ -59,5 +62,90 @@ public class ProdutoTest {
 		assertEquals(SituacaoProduto.ATIVO, produto.getSituacao());
 		
 	}
+	
+	
+	@Test
+	public void adicionarComponentesEstrutura() {
+		UnidadeMedida unidadeMedida = new UnidadeMedida("Unidade","UN");
+		Material material1 = new Material("TUBO DE ACO 20X20X100",SituacaoProduto.ATIVO, unidadeMedida, 8.00, 5, 100.00, 75.00);
+		material1.setPeso(0.2);
+		material1.setAltura(20.00);
+		material1.setComprimento(100.00);
+		material1.setLargura(20.00);
+		
+		Material material2 = new Material("TAMPO DE MADEIRA",SituacaoProduto.ATIVO, unidadeMedida, 8.00, 5, 100.00, 75.00);
+		
+		material2.setPeso(1.00);
+		material2.setAltura(35.00);
+		material2.setComprimento(500.00);
+		material2.setLargura(500.00);
+
+		
+		Produto produto = new Produto("Mesa",SituacaoProduto.ATIVO,unidadeMedida,150.00,2,10.00,5.00);
+		produto.setPeso(1.5);
+		produto.setCodigoInterno("MI-005");
+		produto.setAltura(300.0);
+		produto.setComprimento(500.00);
+		produto.setLargura(200.00);
+		produto.setSituacao(SituacaoProduto.ATIVO);
+		
+		
+		ItemEstrutura item1 = new ItemEstrutura(material1, 2.00);
+		ItemEstrutura item2 = new ItemEstrutura(material2, 1.00);
+		ItemEstrutura item3 = new ItemEstrutura(material2, 3.00);
+		produto.adicionarComponente(item1);
+		produto.adicionarComponente(item2);
+		produto.adicionarComponente(item3);
+		
+		
+		
+		assertEquals(2.00, produto.getEstrutura().get(0).getQuantidade(),0);
+		assertEquals(1.00, produto.getEstrutura().get(1).getQuantidade(),0);
+		assertEquals(3.00, produto.getEstrutura().get(2).getQuantidade(),0);
+		
+	}
+	
+	@Test
+	public void removerComponentesEstrutura() {
+		UnidadeMedida unidadeMedida = new UnidadeMedida("Unidade","UN");
+		Material material1 = new Material("TUBO DE ACO 20X20X100",SituacaoProduto.ATIVO, unidadeMedida, 8.00, 5, 100.00, 75.00);
+		material1.setPeso(0.2);
+		material1.setAltura(20.00);
+		material1.setComprimento(100.00);
+		material1.setLargura(20.00);
+		
+		Material material2 = new Material("TAMPO DE MADEIRA",SituacaoProduto.ATIVO, unidadeMedida, 8.00, 5, 100.00, 75.00);
+		
+		material2.setPeso(1.00);
+		material2.setAltura(35.00);
+		material2.setComprimento(500.00);
+		material2.setLargura(500.00);
+
+		
+		Produto produto = new Produto("Mesa",SituacaoProduto.ATIVO,unidadeMedida,150.00,2,10.00,5.00);
+		produto.setPeso(1.5);
+		produto.setCodigoInterno("MI-005");
+		produto.setAltura(300.0);
+		produto.setComprimento(500.00);
+		produto.setLargura(200.00);
+		produto.setSituacao(SituacaoProduto.ATIVO);
+		
+		
+		ItemEstrutura item1 = new ItemEstrutura(material1, 2.00);
+		ItemEstrutura item2 = new ItemEstrutura(material2, 1.00);
+		produto.adicionarComponente(item1);
+		produto.adicionarComponente(item2);
+
+		
+
+		produto.removerComponente(1);
+		
+		assertEquals(1, produto.getEstrutura().size());
+
+		
+		
+	
+	}
+	
 
 }

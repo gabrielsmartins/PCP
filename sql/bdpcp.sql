@@ -19,7 +19,7 @@ CREATE TABLE usuario(
        usr_login VARCHAR(200) NOT NULL,
        usr_pwd VARCHAR(200) NOT NULL,
        CONSTRAINT PK_usuario PRIMARY KEY(usr_id),
-       CONSTRAINT FK_usuario_perfil FOREIGN KEY(usr_perf_id) REFERENCES perfil(perf_id),
+       CONSTRAINT FK_usuario_perfil FOREIGN KEY(usr_perf_id) REFERENCES perfil(perf_id) ON DELETE CASCADE,
        CONSTRAINT UNQ_usuario_nome UNIQUE(usr_nome)
 );
 
@@ -50,7 +50,7 @@ CREATE TABLE operacao(
        oper_instr VARCHAR(500) NOT NULL,
        oper_setr_id BIGINT NOT NULL,
        CONSTRAINT PK_oper_id  PRIMARY KEY(oper_id),
-       CONSTRAINT FK_operacao_setor FOREIGN KEY(oper_setr_id) REFERENCES setor(setr_id),
+       CONSTRAINT FK_operacao_setor FOREIGN KEY(oper_setr_id) REFERENCES setor(setr_id)  ON DELETE CASCADE,
        CONSTRAINT UNQ_operacao_desc UNIQUE(oper_desc)	
 );
 
@@ -60,9 +60,10 @@ CREATE TABLE recurso(
        recr_desc VARCHAR(200) NOT NULL,
        recr_setr_id BIGINT NOT NULL,
        CONSTRAINT PK_recr_id PRIMARY KEY(recr_id),
-       CONSTRAINT FK_recurso_operacao FOREIGN KEY (recr_setr_id) REFERENCES setor(setr_id),
+       CONSTRAINT FK_recurso_operacao FOREIGN KEY (recr_setr_id) REFERENCES setor(setr_id)  ON DELETE CASCADE,
        CONSTRAINT UNQ_recurso_desc UNIQUE(recr_desc)	
 );
+
 
 
 CREATE TABLE produto(
@@ -82,7 +83,7 @@ CREATE TABLE produto(
        prod_tipo VARCHAR(200) NOT NULL,
        CONSTRAINT PK_produto PRIMARY KEY(prod_id),
        CONSTRAINT UNQ_produto_codigo_interno UNIQUE(prod_cod_intr),
-       CONSTRAINT FK_produto_unidade FOREIGN KEY(prod_unid_id) REFERENCES unidade(unid_id),
+       CONSTRAINT FK_produto_unidade FOREIGN KEY(prod_unid_id) REFERENCES unidade(unid_id)  ON DELETE CASCADE,
        CONSTRAINT CHK_produto_situacao CHECK(prod_sit IN('ATIVO','INATIVO','FORA_DE_LINHA'))
 );
 
@@ -93,23 +94,63 @@ CREATE TABLE estrutura_produto(
        prod_sub_id BIGINT NOT NULL,
        prod_sub_qntd NUMERIC(15,4) NOT NULL,
        CONSTRAINT PK_estrutura_produto PRIMARY KEY(prod_id,prod_sub_id),
-       CONSTRAINT FK_estrutura_produto_produto FOREIGN KEY(prod_id)REFERENCES produto(prod_id),
-       CONSTRAINT FK_estrutura_produto_subproduto FOREIGN KEY(prod_sub_id)REFERENCES produto(prod_id)
+       CONSTRAINT FK_estrutura_produto_produto FOREIGN KEY(prod_id)REFERENCES produto(prod_id)  ON UPDATE CASCADE ON DELETE CASCADE,
+       CONSTRAINT FK_estrutura_produto_subproduto FOREIGN KEY(prod_sub_id)REFERENCES produto(prod_id)  ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
 CREATE TABLE roteiro(
-	     rot_prod_id BIGINT NOT NULL,
+		 rot_prod_id BIGINT NOT NULL,
 	     rot_oper_id BIGINT NOT NULL,
-	     rot_seq BIGINT NOT NULL,
+	     rot_seq INT NOT NULL,
 	     rot_tmp_stp TIME NOT NULL,
 	     rot_tmp_prd TIME NOT NULL,
 	     rot_tmp_fnl TIME NOT NULL,
 		 CONSTRAINT PK_roteiro PRIMARY KEY(rot_prod_id,rot_oper_id,rot_seq),
-	     CONSTRAINT FK_roteiro_produto FOREIGN KEY(rot_prod_id) REFERENCES produto(prod_id),
-		 CONSTRAINT FK_roteiro_operacao FOREIGN KEY(rot_oper_id) REFERENCES operacao(oper_id)
+		 CONSTRAINT FK_roteiro_produto FOREIGN KEY(rot_prod_id) REFERENCES produto(prod_id) ON UPDATE CASCADE ON DELETE CASCADE,
+		 CONSTRAINT FK_roteiro_operacao FOREIGN KEY(rot_oper_id) REFERENCES operacao(oper_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+
+CREATE TABLE ordem_producao(
+	     ord_id BIGINT AUTO_INCREMENT NOT NULL,
+		 ord_prod_id BIGINT NOT NULL,
+	     ord_dt_emi TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
+	     ord_prazo  DATE NOT NULL,
+	     ord_usr_id BIGINT NOT NULL,
+	     ord_dt_concl TIMESTAMP ,
+	     ord_status VARCHAR(500) NOT NULL DEFAULT 'EMITIDA',
+	     CONSTRAINT PK_ordem_producao PRIMARY KEY(ord_prod_id),
+	     CONSTRAINT FK_ordem_producao_produto FOREIGN KEY(ord_id) REFERENCES produto(prod_id),
+	     CONSTRAINT FK_ordem_producao_usuario FOREIGN KEY(ord_usr_id) REFERENCES usuario(usr_id),
+	     CONSTRAINT CHK_ordem_producao_status CHECK(ord_status IN('EMITIDA','INICIADA','ENCERRADA','CANCELADA'))     
+);
+
+
+
+CREATE TABLE requisicao_material(
+	     rm_id BIGINT AUTO_INCREMENT NOT NULL,
+	     rm_dt_emi TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
+	     rm_prazo  DATE NOT NULL,
+	     rm_usr_id BIGINT NOT NULL,
+	     rm_dt_concl TIMESTAMP ,
+	     rm_status VARCHAR(500) NOT NULL DEFAULT 'EMITIDA',
+	     CONSTRAINT PK_requisicao_material PRIMARY KEY(rm_id),
+	     CONSTRAINT FK_requisicao_material_usuario FOREIGN KEY(rm_usr_id) REFERENCES usuario(usr_id),
+	     CONSTRAINT CHK_requisicao_material_status CHECK(rm_status IN('EMITIDA','CONCLUIDA PARCIAL','CONCLUIDA TOTAL','CANCELADA'))
+	     
+);
+
+
+
+CREATE TABLE requisicao_material_detalhe(
+	     rm_id BIGINT NOT NULL,
+	     rm_prod_id BIGINT NOT NULL,
+	     rm_prod_qntd NUMERIC(15,2) NOT NULL,
+	     CONSTRAINT PK_requisicao_material_detalhe PRIMARY KEY(rm_id,rm_prod_id),
+	     CONSTRAINT FK_requisicao_material_detalhe_requisicao FOREIGN KEY(rm_id) REFERENCES requisicao_material(rm_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	     CONSTRAINT FK_requisicao_material_detalhe_produto FOREIGN KEY(rm_prod_id) REFERENCES produto(prod_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
 
 

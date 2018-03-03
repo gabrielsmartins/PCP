@@ -14,6 +14,7 @@ import br.ifsp.edu.pcp.dao.HibernateUtil;
 import br.ifsp.edu.pcp.dao.SetorDAO;
 import br.ifsp.edu.pcp.model.Setor;
 
+
 public class SetorDAOTest {
 
 	private static SetorDAO setorDAO;
@@ -21,6 +22,7 @@ public class SetorDAOTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+                tearDownAfterClass();
 		setorDAO = new SetorDAO();
 	}
 
@@ -69,7 +71,9 @@ public class SetorDAOTest {
 	public static void tearDownAfterClass() throws Exception {
 		EntityManager entityManager = HibernateUtil.getInstance();
 		entityManager.getTransaction().begin();
-		entityManager.createNativeQuery("TRUNCATE TABLE setor CASCADE").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE setor").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 		entityManager.flush();
 		entityManager.getTransaction().commit();
 		

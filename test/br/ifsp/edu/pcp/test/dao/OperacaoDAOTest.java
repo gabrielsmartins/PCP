@@ -1,5 +1,6 @@
 package br.ifsp.edu.pcp.test.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
@@ -16,12 +17,14 @@ import br.ifsp.edu.pcp.dao.SetorDAO;
 import br.ifsp.edu.pcp.model.Operacao;
 import br.ifsp.edu.pcp.model.Setor;
 
+
 public class OperacaoDAOTest {
 
 	private static SetorDAO setorDAO;
 	private static OperacaoDAO operacaoDAO;
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+                 tearDownAfterClass();
 		setorDAO = new SetorDAO();
 		operacaoDAO = new OperacaoDAO();
 	}
@@ -74,12 +77,28 @@ public class OperacaoDAOTest {
 	}
 	
 	
+	@Test
+	public void listarSimilares() {
+		Setor setor = new Setor("TORNEAR");
+		setorDAO.salvar(setor);
+        Operacao operacao1 = new Operacao("TORNEAR 1", "TORNEAR", setor);
+        Operacao operacao2 = new Operacao("TORNEAR 2", "TORNEAR", setor);
+        operacaoDAO.salvar(operacao1);
+        operacaoDAO.salvar(operacao2);
+        List<Operacao> operacoes = operacaoDAO.buscaSimilar("TORN");
+		assertEquals(2, operacoes.size());
+	}
+	
+	
+	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		EntityManager entityManager = HibernateUtil.getInstance();
 		entityManager.getTransaction().begin();
-		entityManager.createNativeQuery("TRUNCATE TABLE operacao CASCADE").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE setor CASCADE").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE operacao").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE setor").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 		entityManager.flush();
 		entityManager.getTransaction().commit();
 		

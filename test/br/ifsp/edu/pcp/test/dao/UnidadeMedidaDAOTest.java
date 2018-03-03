@@ -20,6 +20,7 @@ public class UnidadeMedidaDAOTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+                tearDownAfterClass();
 		unidadeMedidaDAO = new UnidadeMedidaDAO();
 	}
 
@@ -66,7 +67,9 @@ public class UnidadeMedidaDAOTest {
 	public static void tearDownAfterClass() throws Exception {
 		EntityManager entityManager = HibernateUtil.getInstance();
 		entityManager.getTransaction().begin();
-		entityManager.createNativeQuery("TRUNCATE TABLE unidade CASCADE").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE unidade").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 		entityManager.flush();
 		entityManager.getTransaction().commit();
 		

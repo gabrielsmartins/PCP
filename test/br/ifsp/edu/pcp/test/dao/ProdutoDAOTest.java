@@ -17,6 +17,7 @@ import br.ifsp.edu.pcp.dao.OperacaoDAO;
 import br.ifsp.edu.pcp.dao.ProdutoDAO;
 import br.ifsp.edu.pcp.dao.SetorDAO;
 import br.ifsp.edu.pcp.dao.UnidadeMedidaDAO;
+import br.ifsp.edu.pcp.model.ItemEstrutura;
 import br.ifsp.edu.pcp.model.Material;
 import br.ifsp.edu.pcp.model.Operacao;
 import br.ifsp.edu.pcp.model.Produto;
@@ -24,6 +25,7 @@ import br.ifsp.edu.pcp.model.Roteiro;
 import br.ifsp.edu.pcp.model.Setor;
 import br.ifsp.edu.pcp.model.SituacaoProduto;
 import br.ifsp.edu.pcp.model.UnidadeMedida;
+
 
 public class ProdutoDAOTest {
 
@@ -36,6 +38,7 @@ public class ProdutoDAOTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+                tearDownAfterClass();
 		unidadeMedidaDAO = new UnidadeMedidaDAO();
 		materialDAO = new MaterialDAO();
 		produtoDAO = new ProdutoDAO();
@@ -67,7 +70,14 @@ public class ProdutoDAOTest {
 		produto.setComprimento(500.00);
 		produto.setLargura(450.00);
 
-		produto.adicionarMaterial(material, 2.00);
+
+		
+		ItemEstrutura item = new ItemEstrutura(material, 2.00);
+
+		produto.adicionarComponente(item);
+
+		
+		
 		
 		Setor setor1 = new Setor("CORTE A LASER");
 		Setor setor2 = new Setor("DOBRA");
@@ -85,8 +95,8 @@ public class ProdutoDAOTest {
 
 
 		
-	   Roteiro roteiro1 = new Roteiro(1L,operacao1, LocalTime.of(02, 05, 00), LocalTime.of(05, 50, 10),  LocalTime.of(02, 10, 05));
-	   Roteiro roteiro2 = new Roteiro(2L,operacao2, LocalTime.of(01, 10, 05), LocalTime.of(06, 35, 05),  LocalTime.of(00, 50, 30));
+	   Roteiro roteiro1 = new Roteiro(1L,operacao1,LocalTime.parse("01:10:05"), LocalTime.parse("05:10:05"),  LocalTime.parse("00:50:05"));
+	   Roteiro roteiro2 = new Roteiro(2L,operacao2,LocalTime.parse("00:05:15"), LocalTime.parse("04:10:30"),  LocalTime.parse("00:40:05"));
 	
 	    produto.adicionarRoteiro(roteiro1);
 	    produto.adicionarRoteiro(roteiro2);
@@ -115,7 +125,9 @@ public class ProdutoDAOTest {
 		produto.setComprimento(500.00);
 		produto.setLargura(450.00);
 
-		produto.adicionarMaterial(material, 5.00);
+		ItemEstrutura item = new ItemEstrutura(material, 5.00);
+		produto.adicionarComponente(item);
+
 
 		produtoDAO.salvar(produto);
 
@@ -124,7 +136,12 @@ public class ProdutoDAOTest {
 		produtoAlterado.setAltura(1750.00);
 		produtoAlterado.setComprimento(500.00);
 		produtoAlterado.setLargura(450.00);
-		produtoAlterado.adicionarMaterial(material, 5.00);
+		
+		
+		ItemEstrutura itemAlterado = new ItemEstrutura(material, 5.00);
+		produto.adicionarComponente(itemAlterado);
+
+
 		produtoAlterado.setId(produto.getId());
 		produtoDAO.atualizar(produtoAlterado);
 	}
@@ -138,7 +155,10 @@ public class ProdutoDAOTest {
 		Produto produto = new Produto("Prateleira Grande", SituacaoProduto.ATIVO,
 				unidadeMedida, 350.00, 20, 5.00, 2.00);
 
-		produto.adicionarMaterial(material, 2.00);
+		
+		ItemEstrutura item = new ItemEstrutura(material, 2.00);
+		produto.adicionarComponente(item);
+
 
 		produtoDAO.salvar(produto);
 		produtoDAO.remover(produto.getId());
@@ -169,10 +189,12 @@ public class ProdutoDAOTest {
 	public static void tearDownAfterClass() throws Exception {
 		EntityManager entityManager = HibernateUtil.getInstance();
 		entityManager.getTransaction().begin();
-		entityManager.createNativeQuery("TRUNCATE TABLE estrutura_produto CASCADE").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE produto CASCADE").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE unidade CASCADE").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE setor CASCADE").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE estrutura_produto").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE produto").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE unidade").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE setor").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 		entityManager.flush();
 		entityManager.getTransaction().commit();
 	}

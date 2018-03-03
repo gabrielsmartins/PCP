@@ -1,4 +1,4 @@
-package br.ifsp.edu.pcp.test.dao;
+package br.ifsp.edu.pcp.test.model;
 
 import static org.junit.Assert.*;
 
@@ -27,10 +27,8 @@ public class AutenticadorUsuarioTest {
 	public static void tearDownAfterClass() throws Exception {
 		EntityManager entityManager = HibernateUtil.getInstance();
 		entityManager.getTransaction().begin();
-                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE usuario").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE perfil").executeUpdate();
-                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE usuario CASCADE").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE perfil CASCADE").executeUpdate();
 		entityManager.flush();
 		entityManager.getTransaction().commit();	
 	}

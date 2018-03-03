@@ -22,6 +22,7 @@ public class UsuarioDAOTest {
 	private static UsuarioDAO usuarioDAO;
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+                tearDownAfterClass();
 		perfilDAO = new PerfilDAO();
 		usuarioDAO = new UsuarioDAO();
 	}
@@ -78,8 +79,10 @@ public class UsuarioDAOTest {
 	public static void tearDownAfterClass() throws Exception {
 		EntityManager entityManager = HibernateUtil.getInstance();
 		entityManager.getTransaction().begin();
-		entityManager.createNativeQuery("TRUNCATE TABLE usuario CASCADE").executeUpdate();
-		entityManager.createNativeQuery("TRUNCATE TABLE perfil CASCADE").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE usuario").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE perfil").executeUpdate();
+                entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
 		entityManager.flush();
 		entityManager.getTransaction().commit();
 		

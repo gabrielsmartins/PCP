@@ -16,12 +16,14 @@ import br.ifsp.edu.pcp.dao.SetorDAO;
 import br.ifsp.edu.pcp.model.Recurso;
 import br.ifsp.edu.pcp.model.Setor;
 
+
 public class RecursoDAOTest {
 
 	private static SetorDAO setorDAO;
 	private static RecursoDAO recursoDAO;
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+                tearDownAfterClass();
 		setorDAO = new SetorDAO();
 		recursoDAO = new RecursoDAO();
 	}
