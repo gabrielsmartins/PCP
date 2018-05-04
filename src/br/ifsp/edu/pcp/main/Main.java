@@ -1,6 +1,6 @@
 package br.ifsp.edu.pcp.main;
 
-import br.ifsp.edu.view.LoginView;
+import br.ifsp.edu.controller.LoginController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -12,8 +12,8 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-       LoginView loginView = new LoginView();
-       loginView.show();
+       LoginController loginController = new LoginController();
+       loginController.getLoginView().show();
     }
 
     /**

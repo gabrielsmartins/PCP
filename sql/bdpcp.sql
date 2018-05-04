@@ -1,9 +1,8 @@
-
 DROP DATABASE IF EXISTS bdpcp;
 CREATE DATABASE bdpcp;
 USE bdpcp;
 
-CREATE TABLE PERFIL(
+CREATE TABLE perfil(
 	perf_id BIGINT NOT NULL AUTO_INCREMENT,
     perf_desc VARCHAR(200) NOT NULL,
 	CONSTRAINT PK_perfil PRIMARY KEY(perf_id),
@@ -18,6 +17,7 @@ CREATE TABLE usuario(
        usr_nome VARCHAR(200) NOT NULL,
        usr_login VARCHAR(200) NOT NULL,
        usr_pwd VARCHAR(200) NOT NULL,
+       usr_ativo BOOLEAN DEFAULT 1 NOT NULL,
        CONSTRAINT PK_usuario PRIMARY KEY(usr_id),
        CONSTRAINT FK_usuario_perfil FOREIGN KEY(usr_perf_id) REFERENCES perfil(perf_id) ON DELETE CASCADE,
        CONSTRAINT UNQ_usuario_nome UNIQUE(usr_nome)
@@ -28,7 +28,7 @@ CREATE TABLE usuario(
 CREATE TABLE unidade(
        unid_id BIGINT AUTO_INCREMENT NOT NULL,
        unid_desc VARCHAR(200) NOT NULL,
-       unid_sig VARCHAR(3) NOT NULL,
+       unid_sig VARCHAR(10) NOT NULL,
        CONSTRAINT PK_unidade PRIMARY KEY(unid_id),
        CONSTRAINT UNQ_unidade_desc UNIQUE(unid_desc),
        CONSTRAINT UNQ_sig UNIQUE(unid_sig)
@@ -115,6 +115,7 @@ CREATE TABLE roteiro(
 CREATE TABLE ordem_producao(
 	     ord_id BIGINT AUTO_INCREMENT NOT NULL,
 		 ord_prod_id BIGINT NOT NULL,
+         ord_prod_qntd NUMERIC(15,2) NOT NULL,
 	     ord_dt_emi TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
 	     ord_prazo  DATE NOT NULL,
 	     ord_usr_id BIGINT NOT NULL,
@@ -144,24 +145,71 @@ CREATE TABLE requisicao_material(
 
 
 CREATE TABLE requisicao_material_detalhe(
+         rm_det_id BIGINT AUTO_INCREMENT NOT NULL,
 	     rm_id BIGINT NOT NULL,
 	     rm_prod_id BIGINT NOT NULL,
 	     rm_prod_qntd NUMERIC(15,2) NOT NULL,
-	     CONSTRAINT PK_requisicao_material_detalhe PRIMARY KEY(rm_id,rm_prod_id),
+         CONSTRAINT PRIMARY KEY(rm_det_id),
+	     CONSTRAINT UNQ_requisicao_material_detalhe UNIQUE(rm_id,rm_prod_id),
 	     CONSTRAINT FK_requisicao_material_detalhe_requisicao FOREIGN KEY(rm_id) REFERENCES requisicao_material(rm_id) ON UPDATE CASCADE ON DELETE CASCADE,
 	     CONSTRAINT FK_requisicao_material_detalhe_produto FOREIGN KEY(rm_prod_id) REFERENCES produto(prod_id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
+CREATE TABLE retirada_produto(
+	retr_id BIGINT AUTO_INCREMENT NOT NULL,
+    retr_dt TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
+    retr_usr_id BIGINT NOT NULL,
+    CONSTRAINT PK_retirada_produto PRIMARY KEY(retr_id),
+    CONSTRAINT FK_retirada_produto_usuario FOREIGN KEY(retr_usr_id) REFERENCES usuario(usr_id)
+);
+
+CREATE TABLE retirada_produto_detalhe(
+    retr_id BIGINT NOT NULL,
+    retr_prod_id BIGINT NOT NULL,
+    retr_prod_qntd NUMERIC(15,2) NOT NULL, 
+    CONSTRAINT PK_retirada_produto_detalhe PRIMARY KEY(retr_id,retr_prod_id),
+	CONSTRAINT FK_retirada_produto_detalhe_retirada FOREIGN KEY(retr_id) REFERENCES retirada_produto(retr_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT FK_retirada_produto_detalhe_produto FOREIGN KEY(retr_prod_id) REFERENCES produto(prod_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+
+CREATE TABLE recebimento_material(
+	receb_id BIGINT AUTO_INCREMENT NOT NULL,
+    receb_dt TIMESTAMP  DEFAULT CURRENT_TIMESTAMP,
+    receb_usr_id BIGINT NOT NULL,
+    CONSTRAINT PK_recebimento_produto PRIMARY KEY(receb_id),
+    CONSTRAINT FK_recebimento_produto_usuario FOREIGN KEY(receb_usr_id) REFERENCES usuario(usr_id)
+);
+
+
+CREATE TABLE recebimento_material_detalhe(
+    receb_id BIGINT NOT NULL,
+    receb_rm_det_id BIGINT NOT NULL,
+    receb_prod_qntd NUMERIC(15,2) NOT NULL, 
+    CONSTRAINT PK_recebimento_produto_detalhe PRIMARY KEY(receb_id,receb_rm_det_id),
+	CONSTRAINT FK_recebimento_produto_detalhe_retirada FOREIGN KEY(receb_id) REFERENCES recebimento_material(receb_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT FK_recebimento_produto_detalhe_requisicao_detalhe FOREIGN KEY(receb_rm_det_id) REFERENCES requisicao_material_detalhe(rm_det_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
 
 
+
+SELECT * FROM usuario;
 SELECT * FROM roteiro;
 SELECT * FROM produto;
 SELECT * FROM estrutura_produto;
 SELECT * FROM setor;
 SELECT * FROM operacao;
 SELECT * FROM unidade;
+SELECT * FROM recurso;
+SELECT * FROM requisicao_material;
+SELECT * FROM requisicao_material_detalhe;
+SELECT * FROM retirada_produto;
+SELECT * FROM retirada_produto_detalhe;
+SELECT * FROM recebimento_material;
+SELECT * FROM recebimento_material_detalhe;
+SELECT * FROM ordem_producao;
 
 
 INSERT INTO perfil(perf_desc)VALUES('PCP');
@@ -169,255 +217,84 @@ INSERT INTO perfil(perf_desc)VALUES('PROGRAMADOR PCP');
 INSERT INTO perfil(perf_desc)VALUES('GERENTE PCP');
 INSERT INTO perfil(perf_desc)VALUES('PRODUCAO');
 INSERT INTO perfil(perf_desc)VALUES('ALMOXARIFADO');
+INSERT INTO perfil(perf_desc)VALUES('EXPEDICAO');
 INSERT INTO perfil(perf_desc)VALUES('ENGENHARIA');
+INSERT INTO perfil(perf_desc)VALUES('ADMINISTRADOR');
 
-INSERT INTO usuario(usr_perf_id,usr_nome,usr_login,usr_pwd)VALUES(1,'Gabriel Martins','admin',12345);
-
-INSERT INTO unidade(unid_desc,unid_sig)VALUES('UNIDADE','UN');
-INSERT INTO unidade(unid_desc,unid_sig)VALUES('CAIXA','CX');
-INSERT INTO unidade(unid_desc,unid_sig)VALUES('MILIMETRO','MM');
+INSERT INTO usuario(usr_perf_id,usr_nome,usr_login,usr_pwd)VALUES(1,'PCP - User','admin','12345');
 
 
+INSERT INTO unidade (unid_id, unid_desc, unid_sig) VALUES
+(1, 'AMPOLA', 'AMP'),
+(2, 'BALDE', 'BAL'),
+(3, 'BANDEJA', 'BAN'),
+(4, 'BARRA', 'BAR'),
+(5, 'BISNAGA', 'BIS'),
+(6, 'BLOCO', 'BLO'),
+(7, 'BOBINA', 'BOB'),
+(8, 'BOMBONA', 'BOM'),
+(9, 'CAPSULA', 'CAP'),
+(10, 'CARTELA', 'CAR'),
+(11, 'CENTO', 'CEN'),
+(12, 'CONJUNTO', 'CJ'),
+(13, 'CENTIMETRO', 'CM'),
+(14, 'CENTIMETRO QUADRADO', 'CM2'),
+(15, 'CAIXA', 'CX'),
+(16, 'CAIXA COM 2 UNIDADES', 'CX2'),
+(17, 'CAIXA COM 3 UNIDADES', 'CX3'),
+(18, 'CAIXA COM 5 UNIDADES', 'CX5'),
+(19, 'CAIXA COM 10 UNIDADES', 'CX10'),
+(20, 'CAIXA COM 15 UNIDADES', 'CX15'),
+(21, 'CAIXA COM 20 UNIDADES', 'CX20'),
+(22, 'CAIXA COM 25 UNIDADES', 'CX25'),
+(23, 'CAIXA COM 50 UNIDADES', 'CX50'),
+(24, 'CAIXA COM 100 UNIDADES', 'CX100'),
+(25, 'DISPLAY', 'DIS'),
+(26, 'DUZIA', 'DUZ'),
+(27, 'EMBALAGEM', 'EMB'),
+(28, 'FARDO', 'FD'),
+(29, 'FOLHA', 'FOL'),
+(30, 'FRASCO', 'FRA'),
+(31, 'GALÃO', 'GAL'),
+(32, 'GARRAFA', 'GF'),
+(33, 'GRAMAS', 'G'),
+(34, 'JOGO', 'JOG'),
+(35, 'QUILOGRAMA', 'KG'),
+(36, 'KIT', 'KIT'),
+(37, 'LATA', 'LAT'),
+(38, 'LITRO', 'LIT'),
+(39, 'METRO', 'M'),
+(40, 'METRO QUADRADO', 'M2'),
+(41, 'METRO CÚBICO', 'M3'),
+(42, 'MILHEIRO', 'MIL'),
+(43, 'MILILITRO', 'ML'),
+(44, 'MEGAWATT HORA', 'MWH'),
+(45, 'PACOTE', 'PAC'),
+(46, 'PALETE', 'PAL'),
+(47, 'PARES', 'PAR'),
+(48, 'PEÇA', 'PC'),
+(49, 'POTE', 'POT'),
+(50, 'QUILATE', 'K'),
+(51, 'RESMA', 'RES'),
+(52, 'ROLO', 'ROL'),
+(53, 'SACO', 'SC'),
+(54, 'SACOLA', 'SAC'),
+(55, 'TAMBOR', 'TMB'),
+(56, 'TANQUE', 'TNQ'),
+(57, 'TONELADA', 'TON'),
+(58, 'TUBO', 'TB'),
+(59, 'UNIDADE', 'UND'),
+(60, 'VASILHAME', 'VAS'),
+(61, 'VIDRO', 'VID');
 
 
 
-/*
-CREATE TABLE Produto (
-    id_prod int PRIMARY KEY,
-    qntd_min numeric(15,2),
-    qntd_estq numeric(15,2),
-    vlr_unit blob,
-    desc varchar(500),
-    qntd_emp numeric(15,2),
-    tipo varchar(200),
-    leadtime numeric(15,2),
-    FK_UnidadeMedida_id_unid int
-);
+INSERT INTO setor (setr_desc) VALUES
+('AJUSTAGEM'),
+('CORTE A LASER'),
+('EMBALAGEM'),
+('ESTAMPARIA'),
+('FERRAMENTARIA'),
+('MONTAGEM'),
+('USINAGEM');
 
-CREATE TABLE Operacao (
-    id_oper int PRIMARY KEY,
-    desc varchar(500),
-    instr varchar(500),
-    FK_CentroTrabalho_id_ct int
-);
-
-CREATE TABLE OrdemProducao (
-    id_ord int PRIMARY KEY,
-    dt_hr_emi datetime,
-    dt_hr_rlz datetime,
-    status varchar(200),
-    prazo date,
-    FK_OrdemProducao_id_ord int
-);
-
-CREATE TABLE OrdemDetalhe_Contem (
-    qntd_rlz numeric(15,2),
-    qntd_prev numeric(15,2),
-    seq int,
-    obs varchar(500),
-    FK_Produto_id_prod int,
-    FK_OrdemProducao_id_ord int
-);
-
-CREATE TABLE Apontamento (
-    id_apont int PRIMARY KEY,
-    dt_hr_ini datetime,
-    qntd varchar(200),
-    dt_hr_fim datetime,
-    tipo varchar(200),
-    FK_Programacao_id_prog int
-);
-
-CREATE TABLE CentroTrabalho (
-    desc varchar(500),
-    id_ct int PRIMARY KEY
-);
-
-CREATE TABLE Requisicao (
-    dt_hr_emi datetime,
-    dt_prev date,
-    dt_hr_rlz datetime,
-    status varchar(200)
-);
-
-CREATE TABLE RequisicaoDetalhe_Contem (
-    seq int,
-    qntd_prev numeric(15,2),
-    qntd_rlz numeric(15,2),
-    FK_Produto_id_prod int
-);
-
-CREATE TABLE Recebimento (
-    id_receb int PRIMARY KEY,
-    dt_hr datetime
-);
-
-CREATE TABLE UnidadeMedida (
-    id_unid int PRIMARY KEY,
-    desc varchar(500),
-    sigla varchar(500)
-);
-
-CREATE TABLE Recurso (
-    id_rec int PRIMARY KEY,
-    desc varchar(200),
-    vlr_hr numeric(15,2),
-    FK_CentroTrabalho_id_ct int
-);
-
-CREATE TABLE Lote (
-    id_lote int PRIMARY KEY,
-    dt_emi datetime,
-    prazo date,
-    qnt_total numeric(15,2),
-    FK_Roteiro_id_rot int
-);
-
-CREATE TABLE Retirada (
-    id_retr int PRIMARY KEY,
-    dt_hr datetime
-);
-
-CREATE TABLE Programacao (
-    dt_ini_prev datetime,
-    id_prog int PRIMARY KEY,
-    dt_fim_prev datetime,
-    total_hr_prev time,
-    FK_Operacao_id_oper int,
-    FK_Recurso_id_rec int
-);
-
-CREATE TABLE Roteiro (
-    id_rot int PRIMARY KEY,
-    tmp_total time,
-    FK_Produto_id_prod int
-);
-
-CREATE TABLE Composicao (
-    FK_Produto_id_prod int,
-    FK_Produto_id_prod_Composicao int,
-    qntd numeric(15,2)
-);
-
-CREATE TABLE Pertence (
-    FK_Recebimento_id_receb int,
-    qntd numeric(15,2)
-);
-
-CREATE TABLE Pertence (
-    FK_OrdemProducao_id_ord int,
-    FK_Lote_id_lote int,
-    qntd numeric(15,2)
-);
-
-CREATE TABLE Utiliza (
-    FK_Operacao_id_oper int,
-    FK_Roteiro_id_rot int,
-    seq int,
-    tmp_setup time,
-    tmp_limp time,
-    tmp_prod time
-);
-
-CREATE TABLE Possui (
-    FK_Lote_id_lote int,
-    FK_Programacao_id_prog int
-);
-
-CREATE TABLE Pertence (
-    FK_Lote_id_lote int,
-    FK_Retirada_id_retr int,
-    qntd numeric(15,2)
-);
- 
-ALTER TABLE Produto ADD CONSTRAINT FK_Produto_1
-    FOREIGN KEY (FK_UnidadeMedida_id_unid)
-    REFERENCES UnidadeMedida (id_unid);
- 
-ALTER TABLE Operacao ADD CONSTRAINT FK_Operacao_1
-    FOREIGN KEY (FK_CentroTrabalho_id_ct)
-    REFERENCES CentroTrabalho (id_ct);
- 
-ALTER TABLE OrdemProducao ADD CONSTRAINT FK_OrdemProducao_1
-    FOREIGN KEY (FK_OrdemProducao_id_ord)
-    REFERENCES OrdemProducao (id_ord);
- 
-ALTER TABLE OrdemDetalhe_Contem ADD CONSTRAINT FK_OrdemDetalhe_Contem_0
-    FOREIGN KEY (FK_Produto_id_prod)
-    REFERENCES Produto (id_prod);
- 
-ALTER TABLE OrdemDetalhe_Contem ADD CONSTRAINT FK_OrdemDetalhe_Contem_1
-    FOREIGN KEY (FK_OrdemProducao_id_ord)
-    REFERENCES OrdemProducao (id_ord);
- 
-ALTER TABLE Apontamento ADD CONSTRAINT FK_Apontamento_1
-    FOREIGN KEY (FK_Programacao_id_prog)
-    REFERENCES Programacao (id_prog);
- 
-ALTER TABLE RequisicaoDetalhe_Contem ADD CONSTRAINT FK_RequisicaoDetalhe_Contem_0
-    FOREIGN KEY (FK_Produto_id_prod)
-    REFERENCES Produto (id_prod);
- 
-ALTER TABLE Recurso ADD CONSTRAINT FK_Recurso_1
-    FOREIGN KEY (FK_CentroTrabalho_id_ct)
-    REFERENCES CentroTrabalho (id_ct);
- 
-ALTER TABLE Lote ADD CONSTRAINT FK_Lote_1
-    FOREIGN KEY (FK_Roteiro_id_rot)
-    REFERENCES Roteiro (id_rot);
- 
-ALTER TABLE Programacao ADD CONSTRAINT FK_Programacao_1
-    FOREIGN KEY (FK_Operacao_id_oper)
-    REFERENCES Operacao (id_oper);
- 
-ALTER TABLE Programacao ADD CONSTRAINT FK_Programacao_2
-    FOREIGN KEY (FK_Recurso_id_rec)
-    REFERENCES Recurso (id_rec);
- 
-ALTER TABLE Roteiro ADD CONSTRAINT FK_Roteiro_1
-    FOREIGN KEY (FK_Produto_id_prod)
-    REFERENCES Produto (id_prod);
- 
-ALTER TABLE Composicao ADD CONSTRAINT FK_Composicao_0
-    FOREIGN KEY (FK_Produto_id_prod)
-    REFERENCES Produto (id_prod);
- 
-ALTER TABLE Composicao ADD CONSTRAINT FK_Composicao_1
-    FOREIGN KEY (FK_Produto_id_prod_Composicao)
-    REFERENCES Produto (id_prod);
- 
-ALTER TABLE Pertence ADD CONSTRAINT FK_Pertence_0
-    FOREIGN KEY (FK_Recebimento_id_receb)
-    REFERENCES Recebimento (id_receb);
- 
-ALTER TABLE Pertence ADD CONSTRAINT FK_Pertence_0
-    FOREIGN KEY (FK_OrdemProducao_id_ord)
-    REFERENCES OrdemProducao (id_ord);
- 
-ALTER TABLE Pertence ADD CONSTRAINT FK_Pertence_1
-    FOREIGN KEY (FK_Lote_id_lote)
-    REFERENCES Lote (id_lote);
- 
-ALTER TABLE Utiliza ADD CONSTRAINT FK_Utiliza_0
-    FOREIGN KEY (FK_Operacao_id_oper)
-    REFERENCES Operacao (id_oper);
- 
-ALTER TABLE Utiliza ADD CONSTRAINT FK_Utiliza_1
-    FOREIGN KEY (FK_Roteiro_id_rot)
-    REFERENCES Roteiro (id_rot);
- 
-ALTER TABLE Possui ADD CONSTRAINT FK_Possui_0
-    FOREIGN KEY (FK_Lote_id_lote)
-    REFERENCES Lote (id_lote);
- 
-ALTER TABLE Possui ADD CONSTRAINT FK_Possui_1
-    FOREIGN KEY (FK_Programacao_id_prog)
-    REFERENCES Programacao (id_prog);
- 
-ALTER TABLE Pertence ADD CONSTRAINT FK_Pertence_0
-    FOREIGN KEY (FK_Lote_id_lote)
-    REFERENCES Lote (id_lote);
- 
-ALTER TABLE Pertence ADD CONSTRAINT FK_Pertence_1
-    FOREIGN KEY (FK_Retirada_id_retr)
-    REFERENCES Retirada (id_retr);*/

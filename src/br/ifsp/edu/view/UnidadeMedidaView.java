@@ -1,13 +1,10 @@
 package br.ifsp.edu.view;
 
-
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -16,71 +13,48 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class LoginView extends Stage{
-	
+public class UnidadeMedidaView extends Stage {
+
 	private Scene scene;
 	private Text scenetitle;
 	private GridPane root;
-	private Button btnLogin;
-	private Button btnSair;
-	private Label lblUsuario;
-	private Label lblSenha;
-	private TextField txtUsuario;
-	private PasswordField txtSenha;
+	private Button btnSalvar;
+	private Button btnCancelar;
+	private Label lblDescricao;
+	private Label lblSigla;
+	private TextField txtDescricao;
+	private TextField txtSigla;
 	private HBox hbBtn;
 	
-	public LoginView() {
-		this.setTitle("Login");
+	public UnidadeMedidaView() {
+		this.setTitle("Unidade Medida");
 		this.initComps();
 		this.setScene(scene);
 	}
 	
 	private void initComps() {
 		this.root = new GridPane();
-		this.scenetitle = new Text("PCP");
+		this.scenetitle = new Text("Unidade Medida");
 		this.scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
 		this.root.setAlignment(Pos.CENTER);
 		this.root.setHgap(10);
 		this.root.setVgap(10);
 		this.root.setPadding(new Insets(25, 25, 25, 25));
 		this.root.add(scenetitle, 0, 0, 2, 1);
-		this.lblUsuario = new Label("Usuario:");
-		this.root.add(lblUsuario, 0, 1);
-		this.txtUsuario = new TextField();
-		this.root.add(txtUsuario, 1, 1);
-		this.lblSenha = new Label("Senha:");
-		this.root.add(lblSenha, 0, 2);
-		this.txtSenha = new PasswordField();
-		this.root.add(txtSenha, 1, 2);
+		this.lblDescricao = new Label("Descricao:");
+		this.root.add(lblDescricao, 0, 1);
+		this.txtDescricao = new TextField();
+		this.root.add(txtDescricao, 1, 1);
+		this.lblSigla = new Label("Sigla:");
+		this.root.add(lblSigla, 0, 2);
+		this.txtSigla = new TextField();
+		this.root.add(txtSigla, 1, 2);
 		this.hbBtn = new HBox(10);
-		this.btnLogin = new Button("Entrar");
-		this.btnSair = new Button("Sair");
+		this.btnSalvar = new Button("Salvar");
+		this.btnCancelar = new Button("Cancelar");
 		this.hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-		this.hbBtn.getChildren().addAll(btnLogin,btnSair);
+		this.hbBtn.getChildren().addAll(btnSalvar,btnCancelar);
 		this.root.add(hbBtn, 1, 4);
 	    this.scene = new Scene(root, 300, 275);
 	}
-
-	public Button getBtnLogin() {
-		return btnLogin;
-	}
-
-	public Button getBtnSair() {
-		return btnSair;
-	}
-
-	public TextField getTxtUsuario() {
-		return txtUsuario;
-	}
-
-	public PasswordField getTxtSenha() {
-		return txtSenha;
-	}
-	
-	
-	
-	
-	
-	
-
 }
