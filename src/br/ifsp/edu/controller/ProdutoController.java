@@ -2,18 +2,35 @@ package br.ifsp.edu.controller;
 
 import java.util.List;
 
+import br.ifsp.edu.pcp.dao.OperacaoDAO;
 import br.ifsp.edu.pcp.dao.ProdutoDAO;
+import br.ifsp.edu.pcp.model.Operacao;
 import br.ifsp.edu.pcp.model.Produto;
 import br.ifsp.edu.pcp.model.SituacaoProduto;
 import br.ifsp.edu.pcp.model.UnidadeMedida;
 import br.ifsp.edu.view.ProdutoView;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.util.Pair;
 
 public class ProdutoController {
 
@@ -211,6 +228,8 @@ public class ProdutoController {
 			}
 		});
 	}
+	
+	
 
 	private void limpaCampos() {
 		produtoView.getLblIDValue().setText("-");

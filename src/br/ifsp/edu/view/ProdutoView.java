@@ -13,11 +13,15 @@ import br.ifsp.edu.pcp.model.UnidadeMedida;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Tab;
@@ -27,6 +31,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -36,6 +41,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import javafx.util.StringConverter;
 
 public class ProdutoView extends Stage {
@@ -57,6 +63,7 @@ public class ProdutoView extends Stage {
 	private Button btnCancelar;
 	private Button btnAddOperacao;
 	private Button btnRemoveOperacao;
+	private Button btnPesquisarOperacao;
 	private Button btnAddComponente;
 	private Button btnRemoveComponente;
 	private Label lblID;
@@ -144,6 +151,7 @@ public class ProdutoView extends Stage {
 		this.carregaTabelaOperacao();
 		this.carregaTabelaComponente();
 		this.initComps();
+		this.handleButtonPesquisarOperacao();
 		this.setScene(scene);
 	}
 
@@ -193,6 +201,7 @@ public class ProdutoView extends Stage {
 		this.btnCancelar = new Button("Cancelar");
 		this.btnAddOperacao = new Button("+");
 		this.btnRemoveOperacao = new Button("-");
+		this.btnPesquisarOperacao = new Button("Pesquisar");
 		this.btnAddComponente = new Button("+");
 		this.btnRemoveComponente = new Button("-");
 		this.tabPane = new TabPane();
@@ -456,7 +465,8 @@ public class ProdutoView extends Stage {
 		gridPane.add(lblPesquisarOperacao, 0, 1);
 		gridPane.add(cmbCriterioOperacao, 1, 1);
 		gridPane.add(txtPesquisaOperacao, 2, 1);
-		gridPane.add(btnAddOperacao,3,1);
+		gridPane.add(btnPesquisarOperacao,3,1);
+		gridPane.add(btnAddOperacao,4,1);
 		gridPane.add(tableOperacao, 0, 2,3,1);
 		//gridPane.add(btnRemoveOperacao, 0, 3);
 		//gridPane.add(tableRoteiro, 0, 3);
@@ -465,6 +475,81 @@ public class ProdutoView extends Stage {
 		gridPane.setPadding(new Insets(25, 25, 25, 25));
 		gridPane.setAlignment(Pos.BASELINE_LEFT);
 		this.abaDadosRoteiro.setContent(gridPane);
+	}
+	
+	
+private void handleButtonPesquisarOperacao() {
+		
+		this.btnPesquisarOperacao.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				Dialog<Pair<String, String>> dialog = new Dialog<>();
+				dialog.setTitle("Pesquisa Operacao");
+				dialog.setHeaderText("Escolha uma operacao para o roteiro");
+				
+	
+				dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL);
+				dialog.setWidth(600);
+				dialog.setHeight(200);
+				
+				TableView<Operacao> tableOperacao =new TableView<>();
+				TableColumn<Operacao, Long> columnOperacaoID = new TableColumn<>("ID");
+				TableColumn<Operacao, String>  columnOperacaoDescricao = new TableColumn<>("Descricao");
+				TableColumn<Operacao, String>  columnOperacaoSetor = new TableColumn<>("Setor");
+				tableOperacao.setItems(FXCollections.observableArrayList(new OperacaoDAO().listar()));
+				columnOperacaoID.setCellValueFactory(new PropertyValueFactory<>("id"));
+				columnOperacaoDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+				columnOperacaoSetor.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getSetor().getDescricao()));
+				tableOperacao.getColumns().addAll(columnOperacaoID,columnOperacaoDescricao,columnOperacaoSetor);
+				
+				tableOperacao.setOnMouseClicked(new EventHandler<javafx.scene.input.MouseEvent>() {
+
+					@Override
+					public void handle(MouseEvent event) {
+						if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+				          Operacao operacao = tableOperacao.getSelectionModel().getSelectedItem();  
+				          dialog.close();
+				        }
+						
+					}
+				});
+				
+				
+				
+				
+				
+				Label lblPesquisar = new Label("Pesquisar:");
+				ComboBox<String> cmbCriterioOperacao = new ComboBox<>(FXCollections.observableArrayList("ID", "Descrição", "Sigla"));
+				TextField txtPesquisaOperacao = new TextField();
+				GridPane gridPane = new GridPane();
+				gridPane.add(lblPesquisar, 0, 1);
+				gridPane.add(cmbCriterioOperacao, 1, 1);
+				gridPane.add(txtPesquisaOperacao, 2, 1);
+				gridPane.add(tableOperacao, 0, 2,3,1);
+				gridPane.setVgap(10);
+				gridPane.setHgap(10);
+				gridPane.setPadding(new Insets(5, 5, 5, 5));
+				gridPane.setHgrow(txtPesquisaOperacao, Priority.ALWAYS);
+				
+				BorderPane pane = new BorderPane();
+				pane.setTop(gridPane);
+				pane.setCenter(tableOperacao);
+
+				dialog.getDialogPane().setContent(pane);
+				dialog.show();
+				
+				
+				
+				
+			}
+		});
+		
+		
+	
+		
+		
+		
 	}
 
 	public Button getBtnNovo() {
@@ -557,6 +642,10 @@ public class ProdutoView extends Stage {
 
 	public ToggleGroup getGroupSituacao() {
 		return groupSituacao;
+	}
+
+	public Button getBtnPesquisarOperacao() {
+		return btnPesquisarOperacao;
 	}
 	
 	
