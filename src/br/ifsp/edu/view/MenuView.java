@@ -12,21 +12,12 @@ public class MenuView extends Stage {
 	private Scene scene;
 	private BorderPane root;
 	private MenuBar menuBar;
-	private Menu menuProduto;
-	private Menu menuMaterial;
 	private Menu menuUnidade;
-	private MenuItem menuItemNovoProduto;
-	private MenuItem menuItemEditarProduto;
-	private MenuItem menuItemPesquisarProduto;
-	private MenuItem menuItemExcluirProduto;
-	private MenuItem menuItemNovoMaterial;
-	private MenuItem menuItemEditarMaterial;
-	private MenuItem menuItemPesquisarMaterial;
-	private MenuItem menuItemExcluirMaterial;
-	private MenuItem menuItemNovoUnidade;
-	private MenuItem menuItemEditarUnidade;
-	private MenuItem menuItemPesquisarUnidade;
-	private MenuItem menuItemExcluirUnidade;
+	private Menu menuSetor;
+	private Menu menuRecurso;
+    private Menu menuOperacao;
+    private Menu menuMaterial;
+    private Menu menuProduto;
 
 	
 	public MenuView() {
@@ -39,62 +30,108 @@ public class MenuView extends Stage {
 	private void initComps() {
 		this.root = new BorderPane();
 		this.menuBar = new MenuBar();
-		this.menuBar.getMenus().add(this.getMenuProduto());
-		this.menuBar.getMenus().add(this.getMenuMaterial());
-		this.menuBar.getMenus().add(this.getMenuUnidade());
+		this.carregaMenuUnidade();
+		this.carregaMenuSetor();
+		this.carregaMenuRecurso();
+		this.carregaMenuOperacao();
+		this.carregaMenuMaterial();
+		this.carregaMenuProduto();
+		this.menuBar.getMenus().addAll(menuUnidade,menuSetor,menuRecurso,menuOperacao,menuMaterial,menuProduto);
 		this.root.setTop(menuBar);
 	    this.scene = new Scene(root,500,600); 
 	    this.root.prefHeightProperty().bind(scene.heightProperty());
 	    this.root.prefWidthProperty().bind(scene.widthProperty());
 	}
 	
-	
-	private Menu getMenuUnidade() {
+	private void carregaMenuUnidade() {
 		this.menuUnidade = new Menu("Unidades");
-		this.menuItemNovoUnidade = new MenuItem("Novo");
-		this.menuItemEditarUnidade = new MenuItem("Editar");
-		this.menuItemExcluirUnidade = new MenuItem("Excluir");
-		this.menuItemPesquisarUnidade = new MenuItem("Pesquisar");
-		this.menuUnidade.getItems().addAll(menuItemNovoUnidade,menuItemEditarUnidade,menuItemExcluirUnidade,menuItemPesquisarUnidade);
+		MenuItem menuItemNovo = new MenuItem("Novo");
+		MenuItem menuItemEditar = new MenuItem("Editar");
+		MenuItem menuItemExcluir = new MenuItem("Excluir");
+		MenuItem menuItemPesquisar = new MenuItem("Pesquisar");
+		this.menuUnidade.getItems().addAll(menuItemNovo,menuItemEditar,menuItemExcluir,menuItemPesquisar);
+	}
+	
+	
+	private void carregaMenuSetor() {
+		this.menuSetor = new Menu("Setores");
+		MenuItem menuItemNovo = new MenuItem("Novo");
+		MenuItem menuItemEditar = new MenuItem("Editar");
+		MenuItem menuItemExcluir = new MenuItem("Excluir");
+		MenuItem menuItemPesquisar = new MenuItem("Pesquisar");
+		this.menuSetor.getItems().addAll(menuItemNovo,menuItemEditar,menuItemExcluir,menuItemPesquisar);
+	}
+	
+	private void carregaMenuRecurso() {
+		this.menuRecurso = new Menu("Recursos");
+		MenuItem menuItemNovo = new MenuItem("Novo");
+		MenuItem menuItemEditar = new MenuItem("Editar");
+		MenuItem menuItemExcluir = new MenuItem("Excluir");
+		MenuItem menuItemPesquisar = new MenuItem("Pesquisar");
+		this.menuRecurso.getItems().addAll(menuItemNovo,menuItemEditar,menuItemExcluir,menuItemPesquisar);
+	}
+	
+	
+	private void carregaMenuOperacao() {
+		this.menuOperacao = new Menu("Operacoes");
+		MenuItem menuItemNovo = new MenuItem("Novo");
+		MenuItem menuItemEditar = new MenuItem("Editar");
+		MenuItem menuItemExcluir = new MenuItem("Excluir");
+		MenuItem menuItemPesquisar = new MenuItem("Pesquisar");
+		this.menuOperacao.getItems().addAll(menuItemNovo,menuItemEditar,menuItemExcluir,menuItemPesquisar);
+	}
+	
+	private void carregaMenuMaterial() {
+		this.menuMaterial = new Menu("Material");
+		MenuItem menuItemNovo = new MenuItem("Novo");
+		MenuItem menuItemEditar = new MenuItem("Editar");
+		MenuItem menuItemExcluir = new MenuItem("Excluir");
+		MenuItem menuItemPesquisar = new MenuItem("Pesquisar");
+		this.menuMaterial.getItems().addAll(menuItemNovo,menuItemEditar,menuItemExcluir,menuItemPesquisar);
+	}
+	
+	
+	private void carregaMenuProduto() {
+		this.menuProduto = new Menu("Produto");
+		MenuItem menuItemNovo = new MenuItem("Novo");
+		MenuItem menuItemEditar = new MenuItem("Editar");
+		MenuItem menuItemExcluir = new MenuItem("Excluir");
+		MenuItem menuItemPesquisar = new MenuItem("Pesquisar");
+		this.menuProduto.getItems().addAll(menuItemNovo,menuItemEditar,menuItemExcluir,menuItemPesquisar);
+	}
+	
+	public Menu getMenuUnidade() {
 		return this.menuUnidade;
 	}
 	
-	private Menu getMenuMaterial() {
-		this.menuMaterial = new Menu("Materiais");
-		this.menuItemNovoMaterial = new MenuItem("Novo");
-		this.menuItemEditarMaterial = new MenuItem("Editar");
-		this.menuItemExcluirMaterial = new MenuItem("Excluir");
-		this.menuItemPesquisarMaterial = new MenuItem("Pesquisar");
-		this.menuMaterial.getItems().addAll(menuItemNovoMaterial,menuItemEditarMaterial,menuItemExcluirMaterial,menuItemPesquisarMaterial);
-		return this.menuMaterial;
-	}
 	
 	
-	private Menu getMenuProduto() {
-		this.menuProduto = new Menu("Produtos");
-		this.menuItemNovoProduto = new MenuItem("Novo");
-		this.menuItemEditarProduto = new MenuItem("Editar");
-		this.menuItemExcluirProduto = new MenuItem("Excluir");
-		this.menuItemPesquisarProduto = new MenuItem("Pesquisar");
-		this.menuProduto.getItems().addAll(menuItemNovoProduto,menuItemEditarProduto,menuItemExcluirProduto,menuItemPesquisarProduto);
-		return this.menuProduto;
+	public Menu getMenuSetor() {
+		return this.menuSetor;
 	}
 
 
-	public MenuItem getMenuItemNovoUnidade() {
-		return menuItemNovoUnidade;
+	public Menu getMenuRecurso() {
+		return menuRecurso;
 	}
 
 
-	public MenuItem getMenuItemPesquisarUnidade() {
-		return menuItemPesquisarUnidade;
+	public Menu getMenuOperacao() {
+		return menuOperacao;
+	}
+
+
+	public Menu getMenuMaterial() {
+		return menuMaterial;
+	}
+
+
+	public Menu getMenuProduto() {
+		return menuProduto;
 	}
 	
 	
-	
-	
-	
-	
+
 	
 	
 	

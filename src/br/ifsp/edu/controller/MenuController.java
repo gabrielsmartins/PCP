@@ -10,7 +10,12 @@ public class MenuController {
 
 	public MenuController() {
 		this.menuView = new MenuView();
-		this.carregaAcaoMenuUnidade();
+		this.handleMenuUnidadeMedida();
+		this.handleMenuSetor();
+		this.handleMenuRecurso();
+		this.handleMenuOperacao();
+		this.handleMenuMaterial();
+		this.handleMenuProduto();
 	}
 
 	public MenuView getMenuView() {
@@ -18,8 +23,8 @@ public class MenuController {
 	}
 	
 	
-	private void carregaAcaoMenuUnidade() {
-		this.menuView.getMenuItemNovoUnidade().setOnAction(new EventHandler<ActionEvent>() {
+	private void handleMenuUnidadeMedida() {
+		this.menuView.getMenuUnidade().getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
 			public void handle(ActionEvent event) {
@@ -29,15 +34,133 @@ public class MenuController {
 		});
 		
 		
-		this.menuView.getMenuItemPesquisarUnidade().setOnAction(new EventHandler<ActionEvent>() {
+		this.menuView.getMenuUnidade().getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
 			public void handle(ActionEvent event) {
-				new UnidadeController().getPesquisaUnidadeMedidaView().show();
+				new UnidadeController().getUnidadeMedidaView().show();
 				
 			}
 		});
+		
+	
 	}
+	
+	private void handleMenuSetor() {
+		this.menuView.getMenuSetor().getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new SetorController().getSetorView().show();
+				
+			}
+		});
+		
+		
+		this.menuView.getMenuSetor().getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new SetorController().getSetorView().show();
+				
+			}
+		});
+
+	}
+	
+	
+	private void handleMenuRecurso() {
+		this.menuView.getMenuRecurso().getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new RecursoController().getRecursoView().show();
+				
+			}
+		});
+		
+		
+		this.menuView.getMenuRecurso().getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new RecursoController().getRecursoView().show();
+				
+			}
+		});
+		
+	}
+	
+	
+	private void handleMenuOperacao() {
+		this.menuView.getMenuOperacao().getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new OperacaoController().getRecursoView().show();
+				
+			}
+		});
+		
+		
+		this.menuView.getMenuOperacao().getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new OperacaoController().getRecursoView().show();
+				
+			}
+		});
+		
+	}
+	
+	
+	private void handleMenuMaterial() {
+		this.menuView.getMenuMaterial().getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new MaterialController().getMaterialView().show();
+				
+			}
+		});
+		
+		
+		this.menuView.getMenuMaterial().getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new MaterialController().getMaterialView().show();
+				
+			}
+		});
+		
+	}
+	
+	
+	private void handleMenuProduto() {
+		this.menuView.getMenuProduto().getItems().get(0).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new ProdutoController().getProdutoView().show();
+				
+			}
+		});
+		
+		
+		this.menuView.getMenuProduto().getItems().get(1).setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				new ProdutoController().getProdutoView().show();
+				
+			}
+		});
+		
+	}
+	
+	
 	
 
 }

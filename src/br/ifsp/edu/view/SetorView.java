@@ -1,8 +1,9 @@
 package br.ifsp.edu.view;
 
-import br.ifsp.edu.pcp.dao.UnidadeMedidaDAO;
-import br.ifsp.edu.pcp.model.UnidadeMedida;
-import javafx.collections.FXCollections;import javafx.collections.ObservableList;
+import br.ifsp.edu.pcp.dao.SetorDAO;
+import br.ifsp.edu.pcp.model.Setor;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,7 +23,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class UnidadeMedidaView extends Stage {
+public class SetorView extends Stage {
 
 	private Scene scene;
 	private Text scenetitle;
@@ -36,23 +37,20 @@ public class UnidadeMedidaView extends Stage {
 	private Label lblID;
 	private Label lblIDValue;
 	private Label lblDescricao;
-	private Label lblSigla;
 	private Label lblPesquisar;
 	private ComboBox<String> cmbCriterio;
 	private TextField txtDescricao;
-	private TextField txtSigla;
 	private TextField txtPesquisa;
 	private HBox hbBtn;
 	private VBox vbTbl;
-	private TableView<UnidadeMedida> table;
-	private TableColumn<UnidadeMedida, Long> columnID;
-	private TableColumn<UnidadeMedida, String> columnDescricao;
-	private TableColumn<UnidadeMedida, String> columnSigla;
-	private UnidadeMedidaDAO unidadeMedidaDAO;
+	private TableView<Setor> table;
+	private TableColumn<Setor, Long> columnID;
+	private TableColumn<Setor, String> columnDescricao;
+	private SetorDAO setorDAO;
 	
 	
-	public UnidadeMedidaView() {
-		this.setTitle("Unidade Medida");
+	public SetorView() {
+		this.setTitle("Setor");
 		this.initComps();
 		this.setScene(scene);
 	}
@@ -61,14 +59,12 @@ public class UnidadeMedidaView extends Stage {
 		this.root = new BorderPane();
 		this.gridCadastro = new GridPane();
 		this.gridPesquisa = new GridPane();
-		this.scenetitle = new Text("Unidade Medida");
+		this.scenetitle = new Text("Setor");
 		this.lblDescricao = new Label("Descricao:");
-		this.lblSigla = new Label("Sigla:");
 		this.lblID = new Label("ID:");
 		this.lblIDValue = new Label("-");
 		this.lblPesquisar = new Label("Pesquisar:");
 		this.txtDescricao = new TextField();
-		this.txtSigla = new TextField();
 		this.txtPesquisa = new TextField();
 		this.btnNovo = new Button("Novo");
 		this.btnSalvar = new Button("Salvar");
@@ -77,7 +73,6 @@ public class UnidadeMedidaView extends Stage {
 		this.carregaComboCriterios();
 		this.carregaTabela();
 		this.txtDescricao.setDisable(true);
-		this.txtSigla.setDisable(true);
 		this.btnSalvar.setDisable(true);
 		this.btnEditar.setDisable(true);
 		this.btnCancelar.setDisable(true);
@@ -94,8 +89,6 @@ public class UnidadeMedidaView extends Stage {
 		this.gridCadastro.add(lblIDValue, 1, 1);
 		this.gridCadastro.add(lblDescricao, 0, 2);
 		this.gridCadastro.add(txtDescricao, 1, 2);
-		this.gridCadastro.add(lblSigla, 0, 3);
-		this.gridCadastro.add(txtSigla, 1, 3);
 		this.hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
 		this.hbBtn.getChildren().addAll(btnNovo,btnSalvar,btnEditar,btnCancelar);
 		this.gridCadastro.add(hbBtn, 1, 4);
@@ -113,17 +106,15 @@ public class UnidadeMedidaView extends Stage {
 	
 	
 	private void carregaTabela() {
-		this.unidadeMedidaDAO = new UnidadeMedidaDAO();
+		this.setorDAO = new SetorDAO();
 		this.table = new TableView<>();
 		this.table.setPrefWidth(500);
-		this.table.setItems(FXCollections.observableArrayList(this.unidadeMedidaDAO.listar()));
+		this.table.setItems(FXCollections.observableArrayList(this.setorDAO.listar()));
 		this.columnID = new TableColumn<>("ID");
 		this.columnDescricao = new TableColumn<>("Descricao");
-		this.columnSigla = new TableColumn<>("Sigla");
 		this.columnID.setCellValueFactory(new PropertyValueFactory<>("id"));
 		this.columnDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
-		this.columnSigla.setCellValueFactory(new PropertyValueFactory<>("sigla"));
-		this.table.getColumns().addAll(columnID,columnDescricao,columnSigla);
+		this.table.getColumns().addAll(columnID,columnDescricao);
 		
 	}
 	
@@ -164,11 +155,8 @@ public class UnidadeMedidaView extends Stage {
 		return txtDescricao;
 	}
 
-	public TextField getTxtSigla() {
-		return txtSigla;
-	}
 
-	public TableView<UnidadeMedida> getTable() {
+	public TableView<Setor> getTable() {
 		return table;
 	}
 

@@ -9,5 +9,7 @@ public class UnidadeMedidaDAO extends GenericDAO<UnidadeMedida, Serializable> {
 	public UnidadeMedidaDAO() {
 		super(UnidadeMedida.class);
 	}
+	
+	
 
 }
