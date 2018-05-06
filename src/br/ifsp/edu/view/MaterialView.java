@@ -28,6 +28,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -197,8 +198,11 @@ public class MaterialView extends Stage {
 		this.gridPesquisa.setPadding(new Insets(25, 25, 25, 0));
 		this.gridPesquisa.add(lblPesquisar, 0, 0);
 		this.gridPesquisa.add(cmbCriterio, 1, 0);
-		this.gridPesquisa.add(txtPesquisa, 2, 0,3,1);
+		this.gridPesquisa.add(txtPesquisa, 2, 0);
+		this.gridPesquisa.setHgrow(txtPesquisa, Priority.ALWAYS);
 		this.vbTbl.getChildren().addAll(gridPesquisa, table);
+		this.vbTbl.setVgrow(table, Priority.ALWAYS);
+		this.grid.setHgrow(tabPane, Priority.ALWAYS);
 		this.root.setLeft(vbTbl);
 		this.root.setCenter(grid);
 		this.scene = new Scene(root);
@@ -213,19 +217,27 @@ public class MaterialView extends Stage {
 		this.columnDescricao = new TableColumn<>("Descricao");
 		this.columnUnidadeMedida = new TableColumn<>("U.M");
 		this.columnSituacao = new TableColumn<>("Situacao");
+		this.columnQuantidadeEstoque = new TableColumn<>("Qntd Estq.");
+		this.columnQuantidadeMinima = new TableColumn<>("Qntd Min.");
+		this.columnLeadTime = new TableColumn<>("Lead Time");
+		this.columnPeso = new TableColumn<>("Peso");
+		this.columnComprimento = new TableColumn<>("Comp (mm)");
+		this.columnLargura = new TableColumn<>("Larg (mm)");
+		this.columnAltura = new TableColumn<>("Alt (mm)");
 		this.columnID.setCellValueFactory(new PropertyValueFactory<>("id"));
 		this.columnCodigoInterno.setCellValueFactory(new PropertyValueFactory<>("codigoInterno"));
 		this.columnDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
 		this.columnUnidadeMedida.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getUnidadeMedida().getDescricao()));
 		this.columnSituacao.setCellValueFactory(new PropertyValueFactory<>("situacao"));
-		/*this.columnPeso.setCellValueFactory(cell -> new SimpleDoubleProperty(cell.getValue().getPeso()));
+		this.columnPeso.setCellValueFactory(new PropertyValueFactory<>("peso"));
 		this.columnComprimento.setCellValueFactory(new PropertyValueFactory<>("comprimento"));
 		this.columnLargura.setCellValueFactory(new PropertyValueFactory<>("largura"));
 		this.columnAltura.setCellValueFactory(new PropertyValueFactory<>("altura"));
 		this.columnQuantidadeEstoque.setCellValueFactory(new PropertyValueFactory<>("quantidadeEstoque"));
 		this.columnQuantidadeMinima.setCellValueFactory(new PropertyValueFactory<>("quantidadeMinima"));
-		this.columnLeadTime.setCellValueFactory(new PropertyValueFactory<>("leadTime"));*/
-		this.table.getColumns().addAll(columnID, columnCodigoInterno,columnDescricao,columnUnidadeMedida,columnSituacao);
+		this.columnQuantidadeMinima.setCellValueFactory(new PropertyValueFactory<>("leadTime"));
+		this.columnLeadTime.setCellValueFactory(new PropertyValueFactory<>("leadTime"));
+		this.table.getColumns().addAll(columnID, columnCodigoInterno,columnDescricao,columnUnidadeMedida,columnSituacao,columnQuantidadeEstoque,columnQuantidadeMinima,columnLeadTime,columnPeso,columnComprimento,columnLargura,columnAltura);
 
 	}
 

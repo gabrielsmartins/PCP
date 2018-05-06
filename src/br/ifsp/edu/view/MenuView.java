@@ -23,7 +23,9 @@ public class MenuView extends Stage {
 	public MenuView() {
 		this.setTitle("Menu Principal");
 		this.initComps();
+		this.setMaximized(true);
 		this.setScene(scene);
+		
 	}
 	
 	
