@@ -1,11 +1,17 @@
 package br.ifsp.edu.controller;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import br.ifsp.edu.pcp.dao.ComponenteDAO;
 import br.ifsp.edu.pcp.dao.OperacaoDAO;
 import br.ifsp.edu.pcp.dao.ProdutoDAO;
+import br.ifsp.edu.pcp.model.Componente;
+import br.ifsp.edu.pcp.model.ItemEstrutura;
 import br.ifsp.edu.pcp.model.Operacao;
 import br.ifsp.edu.pcp.model.Produto;
+import br.ifsp.edu.pcp.model.Roteiro;
 import br.ifsp.edu.pcp.model.SituacaoProduto;
 import br.ifsp.edu.pcp.model.UnidadeMedida;
 import br.ifsp.edu.view.ProdutoView;
@@ -16,11 +22,11 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -30,7 +36,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.util.Pair;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class ProdutoController {
 
@@ -45,7 +52,13 @@ public class ProdutoController {
 		this.handleButtonEditar();
 		this.handleButtonCancelar();
 		this.handleTable();
+		this.handleTableRoteiro();
+		this.handleTableEstrutura();
 		this.handleTextPesquisa();
+		this.handleButtonPesquisarOperacao();
+		this.handleButtonAddRoteiro();
+		this.handleButtonAddEstrutura();
+		this.handleButtonPesquisarComponente();
 	}
 
 	public ProdutoView getProdutoView() {
@@ -148,6 +161,7 @@ public class ProdutoController {
 		});
 	}
 
+	
 	private void handleTable() {
 		this.getProdutoView().getTable().setOnMouseClicked(new EventHandler<Event>() {
 
@@ -191,10 +205,65 @@ public class ProdutoController {
 
 	}
 	
-	private void handleTextPesquisa() {
-	   
+	
+	
+	
+	
+	
+	
 
-		
+	private void handleTableRoteiro() {
+		this.getProdutoView().getTableRoteiro().setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				if (produtoView.getTableRoteiro().getSelectionModel().getSelectedItem() != null) {
+					Roteiro roteiro = getProdutoView().getTableRoteiro().getSelectionModel().getSelectedItem();
+					
+					produtoView.getLblIDOperacaoValue().setText(roteiro.getOperacao().getId().toString());
+					produtoView.getLblDescricaoOperacaoValue().setText(roteiro.getOperacao().getDescricao());
+					produtoView.getLblSetorOperacaoValue().setText(roteiro.getOperacao().getSetor().getDescricao());
+					produtoView.getTxtTempoSetup().setText(roteiro.getTempoSetup().toString());
+					produtoView.getTxtTempoProducao().setText(roteiro.getTempoProducao().toString());
+					produtoView.getTxtTempoFinalizacao().setText(roteiro.getTempoFinalizacao().toString());
+			        produtoView.getTxtTempoSetup().setDisable(true);
+			        produtoView.getTxtTempoProducao().setDisable(true);
+			        produtoView.getTxtTempoFinalizacao().setDisable(true);
+				}
+
+			}
+		});
+
+	}
+	
+	
+	private void handleTableEstrutura() {
+		this.getProdutoView().getTableEstrutura().setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				if (produtoView.getTableEstrutura().getSelectionModel().getSelectedItem() != null) {
+					ItemEstrutura item = getProdutoView().getTableEstrutura().getSelectionModel().getSelectedItem();
+					
+					produtoView.getLblIDComponenteValue().setText(item.getComponente().getId().toString());
+					produtoView.getLblCodigoInternoComponenteValue().setText(item.getComponente().getCodigoInterno());
+					produtoView.getLblDescricaoComponenteValue().setText(item.getComponente().getDescricao());
+					produtoView.getLblUnidadeComponenteValue().setText(item.getComponente().getUnidadeMedida().getSigla());
+					produtoView.getLblSituacaoComponenteValue().setText(item.getComponente().getSituacao().toString());
+					produtoView.getTxtQuantidadeComponente().setText(item.getQuantidade().toString());
+					
+					 produtoView.getTxtQuantidadeComponente().setDisable(true);
+				}
+
+			}
+		});
+
+	}
+	
+	
+	
+	
+	private void handleTextPesquisa() {
 		produtoView.getTxtPesquisa().setOnKeyReleased(new EventHandler<Event>() {
 
 			@Override
@@ -228,8 +297,224 @@ public class ProdutoController {
 			}
 		});
 	}
+
+
+
+private void handleButtonPesquisarOperacao() {
+
+	produtoView.getBtnPesquisarOperacao().setOnAction(new EventHandler<ActionEvent>() {
+
+		@Override
+		public void handle(ActionEvent event) {
+			Stage stage = new Stage(StageStyle.DECORATED);
+			TableView<Operacao> tableOperacao = new TableView<>();
+			TableColumn<Operacao, Long> columnOperacaoID = new TableColumn<>("ID");
+			TableColumn<Operacao, String> columnOperacaoDescricao = new TableColumn<>("Descricao");
+			TableColumn<Operacao, String> columnOperacaoSetor = new TableColumn<>("Setor");
+			tableOperacao.setItems(FXCollections.observableArrayList(new OperacaoDAO().listar()));
+			columnOperacaoID.setCellValueFactory(new PropertyValueFactory<>("id"));
+			columnOperacaoDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+			columnOperacaoSetor.setCellValueFactory(
+					cell -> new SimpleStringProperty(cell.getValue().getSetor().getDescricao()));
+			tableOperacao.getColumns().addAll(columnOperacaoID, columnOperacaoDescricao, columnOperacaoSetor);
+
+			tableOperacao.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+				@Override
+				public void handle(MouseEvent event) {
+					if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+						Operacao operacao = tableOperacao.getSelectionModel().getSelectedItem();
+						produtoView.getLblIDOperacaoValue().setText(operacao.getId().toString());
+						produtoView.getLblDescricaoOperacaoValue().setText(operacao.getDescricao());
+						produtoView.getLblSetorOperacaoValue().setText(operacao.getSetor().getDescricao());
+						produtoView.getTxtTempoSetup().setDisable(false);
+						produtoView.getTxtTempoProducao().setDisable(false);
+						produtoView.getTxtTempoFinalizacao().setDisable(false);
+						stage.close();
+					}
+
+				}
+			});
+
+			Label lblPesquisar = new Label("Pesquisar:");
+			ComboBox<String> cmbCriterioOperacao = new ComboBox<>(
+					FXCollections.observableArrayList("ID", "Descrição", "Sigla"));
+			TextField txtPesquisaOperacao = new TextField();
+			Button btnEscolher = new Button("Escolher");
+			GridPane gridPane = new GridPane();
+			gridPane.add(lblPesquisar, 0, 1);
+			gridPane.add(cmbCriterioOperacao, 1, 1);
+			gridPane.add(txtPesquisaOperacao, 2, 1);
+			gridPane.add(btnEscolher, 3, 1);
+			gridPane.add(tableOperacao, 0, 2, 3, 1);
+			gridPane.setVgap(10);
+			gridPane.setHgap(10);
+			gridPane.setPadding(new Insets(5, 5, 5, 5));
+			gridPane.setHgrow(txtPesquisaOperacao, Priority.ALWAYS);
+
+			BorderPane pane = new BorderPane();
+			pane.setPadding(new Insets(0, 5, 10, 5));
+			pane.setTop(gridPane);
+			pane.setCenter(tableOperacao);
+
+			Scene scene = new Scene(pane);
+			stage.setScene(scene);
+			stage.show();
+
+			btnEscolher.setOnAction(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					Operacao operacao = tableOperacao.getSelectionModel().getSelectedItem();
+					produtoView.getLblIDOperacaoValue().setText(operacao.getId().toString());
+					produtoView.getLblDescricaoOperacaoValue().setText(operacao.getDescricao());
+					produtoView.getLblSetorOperacaoValue().setText(operacao.getSetor().getDescricao());
+					produtoView.getTxtTempoSetup().setDisable(false);
+					produtoView.getTxtTempoProducao().setDisable(false);
+					produtoView.getTxtTempoFinalizacao().setDisable(false);
+					stage.close();
+				}
+			});
+
+		}
+	});
+
+}
+
+
+
+
+
+
+private void handleButtonPesquisarComponente() {
+
+	produtoView.getBtnPesquisarComponente().setOnAction(new EventHandler<ActionEvent>() {
+
+		@Override
+		public void handle(ActionEvent event) {
+			Stage stage = new Stage(StageStyle.DECORATED);
+			stage.setWidth(700);
+			TableView<Componente> tableEstrutura = new TableView<>();
+			TableColumn<Componente, Long> columnComponenteID = new TableColumn<>("ID");
+			TableColumn<Componente, String> columnComponenteCodigoInterno = new TableColumn<>("Cod. Interno");
+			TableColumn<Componente, String> columnComponenteDescricao = new TableColumn<>("Descricao");
+			TableColumn<Componente, String> columnComponenteUnidadeMedida = new TableColumn<>("U.M");
+			TableColumn<Componente, String> columnComponenteSituacao = new TableColumn<>("Situacao");
+			TableColumn<Componente, Double> columnComponenteQuantidade = new TableColumn<>("Qntd.");
+			tableEstrutura.setItems(FXCollections.observableArrayList(new ComponenteDAO().listar()));
+			columnComponenteID.setCellValueFactory(new PropertyValueFactory<>("id"));
+			columnComponenteCodigoInterno.setCellValueFactory(new PropertyValueFactory<>("codigoInterno"));
+			columnComponenteDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+			columnComponenteUnidadeMedida.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getUnidadeMedida().getSigla()));
+			columnComponenteSituacao.setCellValueFactory(new PropertyValueFactory<>("situacao"));
+			columnComponenteQuantidade.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+			tableEstrutura.getColumns().addAll(columnComponenteID, columnComponenteCodigoInterno,columnComponenteDescricao, columnComponenteUnidadeMedida,columnComponenteSituacao,columnComponenteQuantidade);
+
+			tableEstrutura.setOnMousePressed(new EventHandler<MouseEvent>() {
+
+				@Override
+				public void handle(MouseEvent event) {
+					if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+						Componente componente = tableEstrutura.getSelectionModel().getSelectedItem();
+						produtoView.getLblIDComponenteValue().setText(componente.getId().toString());
+						produtoView.getLblCodigoInternoComponenteValue().setText(componente.getCodigoInterno());
+						produtoView.getLblDescricaoComponenteValue().setText(componente.getDescricao());
+						produtoView.getLblUnidadeComponenteValue().setText(componente.getUnidadeMedida().getSigla());
+						produtoView.getLblSituacaoComponenteValue().setText(componente.getSituacao().toString());
+						produtoView.getTxtQuantidadeComponente().setDisable(false);
+						stage.close();
+					}
+
+				}
+			});
+
+			Label lblPesquisar = new Label("Pesquisar:");
+			ComboBox<String> cmbCriterioOperacao = new ComboBox<>(
+					FXCollections.observableArrayList("ID", "Codigo Interno","Descrição","Situacao"));
+			TextField txtPesquisaOperacao = new TextField();
+			Button btnEscolher = new Button("Escolher");
+			GridPane gridPane = new GridPane();
+			gridPane.add(lblPesquisar, 0, 1);
+			gridPane.add(cmbCriterioOperacao, 1, 1);
+			gridPane.add(txtPesquisaOperacao, 2, 1);
+			gridPane.add(btnEscolher, 3, 1);
+			gridPane.add(tableEstrutura, 0, 2, 3, 1);
+			gridPane.setVgap(10);
+			gridPane.setHgap(10);
+			gridPane.setPadding(new Insets(5, 5, 5, 5));
+			gridPane.setHgrow(txtPesquisaOperacao, Priority.ALWAYS);
+
+			BorderPane pane = new BorderPane();
+			pane.setPadding(new Insets(0, 5, 10, 5));
+			pane.setTop(gridPane);
+			pane.setCenter(tableEstrutura);
+
+			Scene scene = new Scene(pane);
+			stage.setScene(scene);
+			stage.show();
+
+			btnEscolher.setOnAction(new EventHandler<ActionEvent>() {
+
+				@Override
+				public void handle(ActionEvent event) {
+					Componente componente = tableEstrutura.getSelectionModel().getSelectedItem();
+					produtoView.getLblIDComponenteValue().setText(componente.getId().toString());
+					produtoView.getLblCodigoInternoComponenteValue().setText(componente.getCodigoInterno());
+					produtoView.getLblDescricaoComponenteValue().setText(componente.getDescricao());
+					produtoView.getLblUnidadeComponenteValue().setText(componente.getUnidadeMedida().getSigla());
+					produtoView.getLblSituacaoComponenteValue().setText(componente.getSituacao().toString());
+					produtoView.getTxtQuantidadeComponente().setDisable(false);
+					stage.close();
+				}
+			});
+
+		}
+	});
+
+}
 	
 	
+private void handleButtonAddRoteiro() {
+	produtoView.getBtnAddRoteiro().setOnAction(new EventHandler<ActionEvent>() {
+		
+		@Override
+		public void handle(ActionEvent event) {
+			if (produtoView.getLblIDOperacaoValue().getText() != "-") {
+				Operacao operacao = new OperacaoDAO().pesquisar(Long.parseLong(produtoView.getLblIDOperacaoValue().getText()));
+				Long sequencia = (long) (produtoView.getTableRoteiro().getItems().size() + 1);
+				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_TIME;
+				LocalTime tempoSetup = LocalTime.parse(produtoView.getTxtTempoSetup().getText(),dateTimeFormatter);
+				LocalTime tempoProducao = LocalTime.parse(produtoView.getTxtTempoProducao().getText(),dateTimeFormatter);
+				LocalTime tempoFinalizacao = LocalTime.parse(produtoView.getTxtTempoFinalizacao().getText(),dateTimeFormatter);
+				
+				Roteiro roteiro = new Roteiro(sequencia, operacao, tempoSetup, tempoProducao, tempoFinalizacao);
+				
+				produtoView.getTableRoteiro().getItems().add(roteiro);
+			}
+			
+		}
+	});
+}
+
+
+
+private void handleButtonAddEstrutura() {
+produtoView.getBtnAddEstrutura().setOnAction(new EventHandler<ActionEvent>() {
+	
+	@Override
+	public void handle(ActionEvent event) {
+		if (produtoView.getLblIDComponenteValue().getText() != "-") {
+			Componente componente = new ComponenteDAO().pesquisar(Long.parseLong(produtoView.getLblIDComponenteValue().getText()));
+			Double quantidade = Double.parseDouble(produtoView.getTxtQuantidadeComponente().getText());
+			
+			ItemEstrutura item = new ItemEstrutura(componente, quantidade);
+			produtoView.getTableEstrutura().getItems().add(item);
+
+		}
+		
+	}
+});
+}
 
 	private void limpaCampos() {
 		produtoView.getLblIDValue().setText("-");
