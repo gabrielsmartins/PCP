@@ -32,6 +32,7 @@ public class UnidadeMedidaView extends Stage {
 	private Button btnNovo;
 	private Button btnSalvar;
 	private Button btnEditar;
+	private Button btnExcluir;
 	private Button btnCancelar;
 	private Label lblID;
 	private Label lblIDValue;
@@ -73,6 +74,7 @@ public class UnidadeMedidaView extends Stage {
 		this.btnNovo = new Button("Novo");
 		this.btnSalvar = new Button("Salvar");
 		this.btnEditar = new Button("Editar");
+		this.btnExcluir = new Button("Excluir");
 		this.btnCancelar = new Button("Cancelar");
 		this.carregaComboCriterios();
 		this.carregaTabela();
@@ -81,6 +83,7 @@ public class UnidadeMedidaView extends Stage {
 		this.btnSalvar.setDisable(true);
 		this.btnEditar.setDisable(true);
 		this.btnCancelar.setDisable(true);
+		this.btnExcluir.setDisable(true);
 		this.hbBtn = new HBox(10);
 		this.vbTbl = new VBox(10);
 		this.vbTbl.setPadding(new Insets(25, 25, 25, 25));
@@ -97,7 +100,7 @@ public class UnidadeMedidaView extends Stage {
 		this.gridCadastro.add(lblSigla, 0, 3);
 		this.gridCadastro.add(txtSigla, 1, 3);
 		this.hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-		this.hbBtn.getChildren().addAll(btnNovo,btnSalvar,btnEditar,btnCancelar);
+		this.hbBtn.getChildren().addAll(btnNovo,btnSalvar,btnEditar,btnExcluir,btnCancelar);
 		this.gridCadastro.add(hbBtn, 1, 4);
 		this.gridPesquisa.setHgap(10);
 		this.gridPesquisa.setVgap(10);
@@ -150,6 +153,12 @@ public class UnidadeMedidaView extends Stage {
 	
 	public Button getBtnEditar() {
 		return btnEditar;
+	}
+	
+	
+
+	public Button getBtnExcluir() {
+		return btnExcluir;
 	}
 
 	public Button getBtnCancelar() {

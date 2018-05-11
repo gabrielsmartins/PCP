@@ -1,6 +1,7 @@
 package br.ifsp.edu.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Query;
 
@@ -15,6 +16,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class UnidadeController {
 
@@ -27,6 +29,7 @@ public class UnidadeController {
 		this.handleButtonNovo();
 		this.handleButtonSalvar();
 		this.handleButtonEditar();
+		this.handleButtonExcluir();
 		this.handleButtonCancelar();
 		this.handleTable();
 		this.handleTextPesquisa();
@@ -59,6 +62,7 @@ public class UnidadeController {
 				habilitaCampos();
 				unidadeMedidaView.getBtnNovo().setDisable(true);
 				unidadeMedidaView.getBtnSalvar().setDisable(false);
+				unidadeMedidaView.getBtnExcluir().setDisable(false);
 				unidadeMedidaView.getBtnEditar().setDisable(true);
 				unidadeMedidaView.getBtnCancelar().setDisable(true);
 			}
@@ -100,6 +104,46 @@ public class UnidadeController {
 			}
 		});
 	}
+	
+	private void handleButtonExcluir() {
+		this.getUnidadeMedidaView().getBtnExcluir().setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if(unidadeMedidaView.getLblIDValue().getText() != "-") {
+					Long id = Long.parseLong(unidadeMedidaView.getLblIDValue().getText());
+					
+					Alert alert = new Alert(AlertType.CONFIRMATION);
+					ButtonType btnSim = new  ButtonType("Sim");
+					ButtonType btnNao = new  ButtonType("Não");
+					alert.getButtonTypes().setAll(btnSim,btnNao);
+					alert.setHeaderText("Atenção");
+					alert.setContentText("Deseja realmente excluir?");
+					Optional<ButtonType> result = alert.showAndWait();
+					if(result.get() == btnSim) {
+						try {
+							unidadeMedidaDAO.remover(id);
+							Alert alertConfirm = new  Alert(AlertType.INFORMATION);
+							alertConfirm.setHeaderText("Sucesso");
+							alertConfirm.setContentText("Unidade Excluída com Sucesso");
+							alertConfirm.show();
+						}catch (Exception e) {
+							Alert alertError = new Alert(AlertType.ERROR);
+							alertError.setHeaderText("Erro");
+							alertError.setContentText("Erro ao excluir, unidade já está sendo utilizada por produto ou material");
+						}finally {
+							atualizarTabela();
+						}
+					}
+					
+					
+					
+				}
+				
+				
+			}
+		});
+	}
 
 	private void handleButtonCancelar() {
 		this.getUnidadeMedidaView().getBtnCancelar().setOnAction(new EventHandler<ActionEvent>() {
@@ -109,6 +153,7 @@ public class UnidadeController {
 				limpaCampos();
 				unidadeMedidaView.getBtnNovo().setDisable(false);
 				unidadeMedidaView.getBtnSalvar().setDisable(true);
+				unidadeMedidaView.getBtnExcluir().setDisable(true);
 				unidadeMedidaView.getBtnEditar().setDisable(true);
 				unidadeMedidaView.getBtnCancelar().setDisable(true);
 				
@@ -130,6 +175,7 @@ public class UnidadeController {
 					unidadeMedidaView.getBtnNovo().setDisable(false);
 					unidadeMedidaView.getBtnSalvar().setDisable(true);
 					unidadeMedidaView.getBtnEditar().setDisable(false);
+					unidadeMedidaView.getBtnExcluir().setDisable(false);
 					unidadeMedidaView.getBtnCancelar().setDisable(true);
 				}
 

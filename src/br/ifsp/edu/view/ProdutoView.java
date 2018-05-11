@@ -595,10 +595,11 @@ public class ProdutoView extends Stage {
 		gridPane.add(lblSituacaoComponenteValue, 1, 5);
 		gridPane.add(lblQuantidadeComponente, 0, 6);
 		gridPane.add(txtQuantidadeComponente, 1, 6);
-		gridPane.add(tableEstrutura, 0, 7, 3, 1);
+		gridPane.add(tableEstrutura, 0, 7, 4, 1);
 		gridPane.setHgrow(btnPesquisarComponente, Priority.ALWAYS);
 		gridPane.setHgrow(btnAddEstrutura, Priority.ALWAYS);
 		gridPane.setHgrow(btnRemoveEstrutura, Priority.ALWAYS);
+		GridPane.setHgrow(tableEstrutura, Priority.ALWAYS);
 		// gridPane.add(btnRemoveOperacao, 0, 3);
 		// gridPane.add(tableRoteiro, 0, 3);
 		gridPane.setHgap(10);
@@ -625,10 +626,11 @@ public class ProdutoView extends Stage {
 		gridPane.add(txtTempoProducao, 1, 5);
 		gridPane.add(lblTempoFinalizacao, 0, 6);
 		gridPane.add(txtTempoFinalizacao, 1, 6);
-		gridPane.add(tableRoteiro, 0, 7, 3, 1);
+		gridPane.add(tableRoteiro, 0, 7, 4, 1);
 		gridPane.setHgrow(btnPesquisarOperacao, Priority.ALWAYS);
 		gridPane.setHgrow(btnAddRoteiro, Priority.ALWAYS);
 		gridPane.setHgrow(btnRemoveRoteiro, Priority.ALWAYS);
+		gridPane.setHgrow(tableRoteiro, Priority.ALWAYS);
 		// gridPane.add(btnRemoveOperacao, 0, 3);
 		// gridPane.add(tableRoteiro, 0, 3);
 		gridPane.setHgap(10);
